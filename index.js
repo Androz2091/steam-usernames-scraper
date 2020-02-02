@@ -1,5 +1,5 @@
 const fetch = require("node-fetch");
-const { black, green } = require("chalk");
+const { black, green, red, blue } = require("chalk");
 const moment = require("moment");
 
 const AbortController = require("abort-controller");
@@ -17,15 +17,17 @@ const log = (msg, type) => {
     const timestamp = `[${moment().format("YYYY-MM-DD HH:mm:ss")}]:`;
     switch (type){
         case "bigsuccess":
-            return console.log(`${timestamp} ${green(msg)} `);
+            return console.log(`${timestamp} ${black.bgGreen(msg)} `);
         case "bigerror":
             return console.log(`${timestamp} ${black.bgRed(msg)} `);
+        case "bigwarn":
+            return console.log(`${timestamp} ${black.bgYellow(msg)} `);
         case "success":
             return console.log(`${timestamp} ${green(type.toUpperCase())} ${msg} `);
         case "error":
-            return console.log(`${timestamp} ${black.bgRed(type.toUpperCase())} ${msg} `);
+            return console.log(`${timestamp} ${red(type.toUpperCase())} ${msg} `);
         case "log":
-            return console.log(`${timestamp} ${black.bgBlue(type.toUpperCase())} ${msg} `);
+            return console.log(`${timestamp} ${blue(type.toUpperCase())} ${msg} `);
     }
 };
 
@@ -44,8 +46,9 @@ const exists = async (username) => {
             let body = await res.text();
             let valid = !body.includes("The specified profile could not be found.");
             if(valid && !body.includes("profile_header_content")){
-                log("Seems like Steam blocked me...", "error");
-                process.exit(0);
+                log("Seems like Steam blocked me...", "bigerror");
+                await delay(10000);
+                resolve(false);
             }
             aborted = 0;
             resolve(valid);
@@ -89,6 +92,12 @@ const exists = async (username) => {
     const toFetch = usernames.filter((u) => !fetched.includes(u));
     log(`Fetching ${toFetch.length} usernames...`, "log");
 
+    setInterval(async () => {
+        log("Storage files wroten.", "bigwarn")
+        await writeFileAsync("./valid.txt", valid.join("\n"));
+        await writeFileAsync("./fetched.txt", fetched.join("\n"));
+    }, 10000);
+
     for(let username of toFetch){
         if(String(usernames.indexOf(username)).endsWith(0)){
             log(`${usernames.indexOf(username)} usernames tested. (${valid.length} valid, ${toFetch.length - (toFetch.indexOf(username))} remaining)`, "bigsuccess");
@@ -98,12 +107,10 @@ const exists = async (username) => {
         if(usernameExists){
             log(`${escape(username)} validated.`, "success");
             valid.push(username);
-            await writeFileAsync("./valid.txt", valid.join("\n"));
         } else {
             log(`${escape(username)} invalidated.`, "error");
         }
         fetched.push(username);
-        await writeFileAsync("./fetched.txt", fetched.join("\n"));
     };
 
 })();
