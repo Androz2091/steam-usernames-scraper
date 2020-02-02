@@ -1,0 +1,34 @@
+{
+  "name": "steam-usernames-scraper",
+  "version": "1.0.0",
+  "description": "Check a list of Steam usernames",
+  "main": "index.js",
+  "dependencies": {
+    "abort-controller": "^3.0.0",
+    "chalk": "^3.0.0",
+    "moment": "^2.24.0",
+    "node-fetch": "^2.6.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Androz2091/steam-usernames-scraper.git"
+  },
+  "keywords": [
+    "steam",
+    "usernames",
+    "scraper",
+    "check",
+    "valid",
+    "list"
+  ],
+  "author": "Androz2091",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Androz2091/steam-usernames-scraper/issues"
+  },
+  "homepage": "https://github.com/Androz2091/steam-usernames-scraper#readme"
+}
