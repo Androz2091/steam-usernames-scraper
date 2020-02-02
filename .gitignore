@@ -1,3 +1,11 @@
+# Node
 node_modules/
-.DS_Store
 package-lock.json
+
+# MacOS
+.DS_Store
+
+# Data files
+list.txt
+fetched.txt
+valid.txt
